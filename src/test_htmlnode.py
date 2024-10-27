@@ -39,5 +39,37 @@ class TestLeafNode(unittest.TestCase):
         with self.assertRaises(ValueError):
             node.to_html()
 
+class TestParentNode(unittest.TestCase):
+    def test_no_tag(self):
+        child_node = LeafNode(value = "tagless value")
+        node = ParentNode([child_node], tag = None, props = "test_props")
+        with self.assertRaises(ValueError):
+            node.to_html()
+
+    def test_no_children(self):
+        child_node = LeafNode(value = "tagless value")
+        node = ParentNode([child_node], tag = None, props = "test_props")
+        node.children = None
+        with self.assertRaises(ValueError):
+            node.to_html()
+
+    def test_one_child(self):
+        child_node = LeafNode(tag = "a", value = "link text", props = {"href": "mylink.url"})
+        node = ParentNode(children= [child_node], tag = "p", props = {"type": "container"})
+        self.assertEqual(node.to_html(),'<p type="container"><a href="mylink.url">link text</a></p>')
+
+    def test_grand_children(self):
+        grandchild_node = LeafNode(tag = "a", value = "link text", props = {"href": "mylink.url"})
+        child_node = ParentNode(children= [grandchild_node], tag = "p", props = {"type": "subcontainer"})
+        node = ParentNode(children= [child_node], tag = "p", props = {"type": "container"})
+        self.assertEqual(node.to_html(),'<p type="container"><p type="subcontainer"><a href="mylink.url">link text</a></p></p>')
+
+    def test_three_children(self):
+        child_node_0 = LeafNode(tag = "a", value = "link text", props = {"href": "mylink.url"})
+        child_node_1 = LeafNode(tag = "b", value = "bold text")
+        child_node_2 = LeafNode(value = "naked text")
+        node = ParentNode(children = [child_node_0, child_node_1, child_node_2], tag = "p", props = {"type": "container"})
+        self.assertEqual(node.to_html(), '<p type="container"><a href="mylink.url">link text</a><b>bold text</b>naked text</p>')
+
 if __name__ == "__main__":
     unittest.main()
