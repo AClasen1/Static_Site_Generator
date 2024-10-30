@@ -1,5 +1,6 @@
 from htmlnode import *
 from textnode import *
+import re
 
 def text_node_to_html_node(text_node):
     match text_node.text_type:
@@ -34,3 +35,17 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                         new_node_type = text_type
                     split_nodes.append(TextNode(split_node[i], new_node_type))
     return split_nodes
+
+def extract_markdown_images(text):
+    markdown_images = []
+    image_markdowns = re.findall(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+    for image_markdown in image_markdowns:
+        markdown_images.append(image_markdown)
+    return markdown_images
+
+def extract_markdown_links(text):
+    markdown_links = []
+    link_markdowns = re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+    for link_markdown in link_markdowns:
+        markdown_links.append(link_markdown)
+    return markdown_links

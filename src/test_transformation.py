@@ -50,5 +50,32 @@ class TestSplitDelimiter(unittest.TestCase):
         for i in range(len(italic_split_node)):
             self.assertEqual(italic_split_node[i], split_goal[i])
 
+class TestExtractLinksImages(unittest.TestCase):
+    def test_one_image(self):
+        input_text = "An image: ![The alt text](www.mysite.png)"
+        extracted_images = extract_markdown_images(input_text)
+        self.assertListEqual(extracted_images, [("The alt text", "www.mysite.png")])
+
+    def test_two_images(self):
+        input_text = "An image: ![The alt text](www.mysite.png), A second image: ![The second alt text](www.myothersite.com)"
+        extracted_images = extract_markdown_images(input_text)
+        self.assertListEqual(extracted_images, [("The alt text", "www.mysite.png"),("The second alt text", "www.myothersite.com")])
+
+    def test_no_images(self):
+        input_text = "This is just **bold text**, nothing to see here"
+        extracted_images = extract_markdown_images(input_text)
+        self.assertListEqual(extracted_images, [])
+
+    def test_one_link(self):
+        input_text = "A link: ![The anchor text](www.mysite.com)"
+        extracted_images = extract_markdown_images(input_text)
+        self.assertListEqual(extracted_images, [("The anchor text", "www.mysite.com")])
+
+    def test_two_links(self):
+        input_text = "A link: ![The anchor text](www.mysite.com), A second link: ![The second anchor text](www.myothersite.com)"
+        extracted_images = extract_markdown_images(input_text)
+        self.assertListEqual(extracted_images, [("The anchor text", "www.mysite.com"),("The second anchor text", "www.myothersite.com")])
+
+
 if __name__ == "__main__":
     unittest.main()
