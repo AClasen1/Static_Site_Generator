@@ -76,6 +76,43 @@ class TestExtractLinksImages(unittest.TestCase):
         extracted_images = extract_markdown_images(input_text)
         self.assertListEqual(extracted_images, [("The anchor text", "www.mysite.com"),("The second anchor text", "www.myothersite.com")])
 
+class TestSplitImages(unittest.TestCase):
+    def test_one_image(self):
+        starter_node = [TextNode("Here's ![an image](myimg.png) to split out", TextType.TEXT)]
+        split_node = split_node_image(starter_node)
+        split_goal = [TextNode("Here's ", TextType.TEXT), TextNode("an image", TextType.IMAGE, "myimg.png"), TextNode(" to split out", TextType.TEXT)]
+        self.assertListEqual(split_node, split_goal)
+
+    def test_one_link(self):
+        starter_node = [TextNode("Here's [a link](mysite.com) to split out", TextType.TEXT)]
+        split_node = split_node_link(starter_node)
+        split_goal = [TextNode("Here's ", TextType.TEXT), TextNode("a link", TextType.LINK, "mysite.com"), TextNode(" to split out", TextType.TEXT)]
+        self.assertListEqual(split_node, split_goal)
+
+    def test_one_image_and_one_link(self):
+        starter_node = [TextNode("Here's ![an image](myimg.png) and [a link](mysite.com) to split out", TextType.TEXT)]
+        image_split_node = split_node_image(starter_node)
+        link_split_node = split_node_link(image_split_node)
+        split_goal = [TextNode("Here's ", TextType.TEXT), TextNode("an image", TextType.IMAGE, "myimg.png"), TextNode(" and ", TextType.TEXT), TextNode("a link", TextType.LINK, "mysite.com"), TextNode(" to split out", TextType.TEXT)]
+        self.assertListEqual(link_split_node, split_goal)
+
+    def test_no_link(self):
+        starter_node = [TextNode("Here's some text to split out", TextType.TEXT)]
+        split_node = split_node_link(starter_node)
+        split_goal = [TextNode("Here's some text to split out", TextType.TEXT)]
+        self.assertListEqual(split_node, split_goal)
+
+    def test_same_image_twice(self):
+        starter_node = [TextNode("Here's ![an image](myimg.png). It's just ![an image](myimg.png)", TextType.TEXT)]
+        split_node = split_node_image(starter_node)
+        split_goal = [TextNode("Here's ", TextType.TEXT), TextNode("an image", TextType.IMAGE, "myimg.png"), TextNode(". It's just ", TextType.TEXT), TextNode("an image", TextType.IMAGE, "myimg.png")]
+        self.assertListEqual(split_node, split_goal)
+
+    def test_two_different_links(self):
+        starter_node = [TextNode("Here's [a link](mysite.com) and another one to [google](google.com), for comparison", TextType.TEXT)]
+        split_node = split_node_link(starter_node)
+        split_goal = [TextNode("Here's ", TextType.TEXT), TextNode("a link", TextType.LINK, "mysite.com"), TextNode(" and another one to ", TextType.TEXT), TextNode("google", TextType.LINK, "google.com"), TextNode(", for comparison", TextType.TEXT)]
+        self.assertListEqual(split_node, split_goal)
 
 if __name__ == "__main__":
     unittest.main()

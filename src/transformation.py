@@ -49,3 +49,59 @@ def extract_markdown_links(text):
     for link_markdown in link_markdowns:
         markdown_links.append(link_markdown)
     return markdown_links
+
+def split_node_image(old_nodes):
+    split_nodes = []
+    for node in old_nodes:
+        if node.text_type != "text":
+            split_nodes.append(node)
+        else:
+            images_in_node = extract_markdown_images(node.text)
+            if images_in_node != []:
+                split_node = split_out_image([node], images_in_node)
+                split_nodes.extend(split_node)
+            else:
+                split_nodes.append(node)
+    return split_nodes
+
+def split_out_image(nodes,images_in_node):
+    if images_in_node == []:
+        return nodes
+    else:
+        first_image_markdown = f"![{images_in_node[0][0]}]({images_in_node[0][1]})"
+        split_final_node = nodes[-1].text.split(first_image_markdown, 1)
+        nodes_with_image_split_out = nodes[:-1]
+        if split_final_node[0] != "":
+            nodes_with_image_split_out.append(TextNode(split_final_node[0], TextType.TEXT))
+        nodes_with_image_split_out.append(TextNode(images_in_node[0][0], TextType.IMAGE, images_in_node[0][1]))
+        if split_final_node[1] != "":
+            nodes_with_image_split_out.append(TextNode(split_final_node[1], TextType.TEXT))
+        return split_out_image(nodes_with_image_split_out, images_in_node[1:])
+    
+def split_node_link(old_nodes):
+    split_nodes = []
+    for node in old_nodes:
+        if node.text_type != "text":
+            split_nodes.append(node)
+        else:
+            links_in_node = extract_markdown_links(node.text)
+            if links_in_node != []:
+                split_node = split_out_link([node], links_in_node)
+                split_nodes.extend(split_node)
+            else:
+                split_nodes.append(node)
+    return split_nodes
+
+def split_out_link(nodes,links_in_node):
+    if links_in_node == []:
+        return nodes
+    else:
+        first_link_markdown = f"[{links_in_node[0][0]}]({links_in_node[0][1]})"
+        split_final_node = nodes[-1].text.split(first_link_markdown, 1)
+        nodes_with_link_split_out = nodes[:-1]
+        if split_final_node[0] != "":
+            nodes_with_link_split_out.append(TextNode(split_final_node[0], TextType.TEXT))
+        nodes_with_link_split_out.append(TextNode(links_in_node[0][0], TextType.LINK, links_in_node[0][1]))
+        if split_final_node[1] != "":
+            nodes_with_link_split_out.append(TextNode(split_final_node[1], TextType.TEXT))
+        return split_out_link(nodes_with_link_split_out, links_in_node[1:])
