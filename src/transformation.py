@@ -105,3 +105,12 @@ def split_out_link(nodes,links_in_node):
         if split_final_node[1] != "":
             nodes_with_link_split_out.append(TextNode(split_final_node[1], TextType.TEXT))
         return split_out_link(nodes_with_link_split_out, links_in_node[1:])
+
+def text_to_textnodes(text):
+    text_as_textnode = [TextNode(text, TextType.TEXT)]
+    with_image_nodes_split_out = split_node_image(text_as_textnode)
+    with_link_nodes_split_out = split_node_link(with_image_nodes_split_out)
+    with_code_nodes_split_out = split_nodes_delimiter(with_link_nodes_split_out, "`", TextType.CODE)
+    with_bold_nodes_split_out = split_nodes_delimiter(with_code_nodes_split_out, "**", TextType.BOLD)
+    with_italic_nodes_split_out = split_nodes_delimiter(with_bold_nodes_split_out, "*", TextType.ITALIC)
+    return with_italic_nodes_split_out

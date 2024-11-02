@@ -76,7 +76,7 @@ class TestExtractLinksImages(unittest.TestCase):
         extracted_images = extract_markdown_images(input_text)
         self.assertListEqual(extracted_images, [("The anchor text", "www.mysite.com"),("The second anchor text", "www.myothersite.com")])
 
-class TestSplitImages(unittest.TestCase):
+class TestSplitImagesAndLinks(unittest.TestCase):
     def test_one_image(self):
         starter_node = [TextNode("Here's ![an image](myimg.png) to split out", TextType.TEXT)]
         split_node = split_node_image(starter_node)
