@@ -1,8 +1,21 @@
 from textnode import TextNode, TextType
 from transformation import *
+from block_transformation import *
 
 def main():
-	text_to_nodify = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
-	print(text_to_textnodes(text_to_nodify))
+	text_to_blockify = """# This is a heading
+
+This is a paragraph of text. It has some **bold** and *italic* words inside of it.
+
+
+
+
+
+
+
+* This is the first list item in a list block
+* This is a list item
+* This is another list item"""
+	print(markdown_to_blocks(text_to_blockify))
 
 main()
