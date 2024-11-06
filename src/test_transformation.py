@@ -114,5 +114,12 @@ class TestSplitImagesAndLinks(unittest.TestCase):
         split_goal = [TextNode("Here's ", TextType.TEXT), TextNode("a link", TextType.LINK, "mysite.com"), TextNode(" and another one to ", TextType.TEXT), TextNode("google", TextType.LINK, "google.com"), TextNode(", for comparison", TextType.TEXT)]
         self.assertListEqual(split_node, split_goal)
 
+class TestTextToTextNodes(unittest.TestCase):
+    def split_out_everything(self):
+        text_to_nodify = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        text_as_text_nodes = text_to_textnodes(text_to_nodify)
+        node_goal = [TextNode("This is ", TextType.TEXT, None), TextNode("text", TextType.BOLD, None), TextNode(" with an ", TextType.TEXT, None), TextNode("italic", TextType.ITALIC, None), TextNode(" word and a ", TextType.TEXT, None), TextNode("code block", TextType.CODE, None), TextNode(" and an ", TextType.TEXT, None), TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"), TextNode(" and a ", TextType.TEXT, None), TextNode("link", TextType.LINK, "https://boot.dev")]
+        self.assertListEqual(text_as_text_nodes, node_goal)
+
 if __name__ == "__main__":
     unittest.main()
