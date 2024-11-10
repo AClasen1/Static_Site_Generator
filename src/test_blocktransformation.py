@@ -120,5 +120,69 @@ This
         block_types = list(map(block_to_block_type, text_blocks))
         self.assertListEqual(block_types, ["unordered_list", "ordered_list", "unordered_list", "ordered_list", "paragraph", "paragraph", "paragraph", "quote", "quote", "paragraph"])
 
+class TestStringHelperFunctions(unittest.TestCase):
+    def test_header_tags(self):
+        headers = """# This is a heading
+## This is a heading
+### This is a heading
+#### This is a heading        
+##### This is a heading        
+###### This is a heading"""
+
+        self.assertListEqual(list(map(get_header_tag, headers.split("\n"))), ["h1","h2","h3","h4","h5","h6"])
+
+    def test_deprefixing(self):
+        strings_to_deprefix = ["1. This is an ordered list item", "* This is an unordered list item", "### This is a header"]
+        self.assertListEqual(list(map(deprefix_string, strings_to_deprefix)), ["This is an ordered list item", "This is an unordered list item", "This is a header"])
+
+class TestMarkdownBlockToHtmlNode(unittest.TestCase):
+    def test_all_types(self):
+        markdown_to_nodify ="""# This is a heading
+
+### This is also a heading
+
+>This is a quote
+
+>And
+>This
+>Is
+>A
+>Multi-line
+>Quote
+
+```This is a block of code:
+SELECT COUNT(1)
+FROM MyTable
+WHERE EventDate >= '1/1/2024'
+```
+
+- This
+* is
+- an
+* unordered
+- list
+
+1. This
+2. is 
+3. an
+4. ordered
+5. list
+
+And this is just
+a humble paragraph"""
+
+        markdown_as_html_node = markdown_to_html_node(markdown_to_nodify)
+        target_html = """<div><h1>This is a heading</h1><h3>This is also a heading</h3><blockquote>This is a quote</blockquote><blockquote>And This Is A Multi-line Quote</blockquote><pre><code>This is a block of code:
+SELECT COUNT(1)
+FROM MyTable
+WHERE EventDate >= '1/1/2024'
+</code></pre><ul><li>This</li><li>is</li><li>an</li><li>unordered</li><li>list</li></ul><ol><li>This</li><li>is </li><li>an</li><li>ordered</li><li>list</li></ol><p>And this is just a humble paragraph</p></div>"""
+        self.assertEqual(markdown_as_html_node.to_html(), target_html)
+
+    def test_empty_doc(self):
+        markdown_as_html_node = markdown_to_html_node("")
+        target_html = "<div></div>"
+        self.assertEqual(markdown_as_html_node.to_html(), target_html)
+
 if __name__ == "__main__":
     unittest.main()
