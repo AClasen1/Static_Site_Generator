@@ -60,7 +60,7 @@ def markdown_to_html_node(markdown):
                 leaf_htmlnodes = list(map(text_node_to_html_node, text_nodes))
                 htmlnode_to_append = ParentNode(leaf_htmlnodes, header_tag)
             case "quote":
-                markdown_block_without_quotes = " ".join(list(map(lambda x: x[1:], markdown_block.split("\n"))))
+                markdown_block_without_quotes = " ".join(list(map(lambda x: x[1:].lstrip(" "), markdown_block.split("\n"))))
                 text_nodes = text_to_textnodes(markdown_block_without_quotes)
                 leaf_htmlnodes = list(map(text_node_to_html_node, text_nodes))
                 htmlnode_to_append = ParentNode(leaf_htmlnodes, "blockquote")
