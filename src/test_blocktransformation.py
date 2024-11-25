@@ -131,6 +131,17 @@ class TestStringHelperFunctions(unittest.TestCase):
 
         self.assertListEqual(list(map(get_header_tag, headers.split("\n"))), ["h1","h2","h3","h4","h5","h6"])
 
+    def test_extract_title(self):
+        markdown = """# This is a heading
+
+## This is a heading
+### This is a heading
+#### This is a heading        
+##### This is a heading        
+###### This is a heading"""
+
+        self.assertEqual("This is a heading", extract_title(markdown))
+
     def test_deprefixing(self):
         strings_to_deprefix = ["1. This is an ordered list item", "* This is an unordered list item", "### This is a header"]
         self.assertListEqual(list(map(deprefix_string, strings_to_deprefix)), ["This is an ordered list item", "This is an unordered list item", "This is a header"])

@@ -95,3 +95,9 @@ def list_to_htmlnode(markdown_block, markdown_block_type):
     list_markdown_block_item_htmlnodes = list(map(lambda x: map(text_node_to_html_node, x), list_markdown_block_item_textnodes))
     list_markdown_block_htmlnodes = list(map(lambda x: ParentNode(x, "li"), list_markdown_block_item_htmlnodes))
     return ParentNode(list_markdown_block_htmlnodes, list_tag)
+
+def extract_title(markdown):
+    header_block = markdown_to_html_node(markdown).children[0]
+    if header_block.tag != "h1":
+        raise ValueError("Header block not represent")
+    return header_block.children[0].value
