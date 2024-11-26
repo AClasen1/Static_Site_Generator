@@ -11,8 +11,18 @@ def generate_page(from_path, template_path, dest_path):
     from_file_content = from_file_text #"\n".join(from_file_text.split("\n")[1:])
     from_file_content_html = block_transformation.markdown_to_html_node(from_file_content).to_html()
     templated_from_html = template_file_text.replace("""{{ Title }}""", from_file_title).replace("""{{ Content }}""", from_file_content_html)
+    if os.path.exists(os.path.dirname(dest_path)) == False:
+        os.makedirs(os.path.dirname(dest_path))
     with open(dest_path, "w") as dest_file:
-        if os.path.exists(os.path.dirname(dest_path)) == False:
-            os.makedirs(os.path.dirname(dest_path))
         dest_file.write(templated_from_html)
-        #print(templated_from_html)
+
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    objects_in_content_dir = os.listdir(dir_path_content)
+    print(objects_in_content_dir)
+    for object in objects_in_content_dir:
+        object_path = os.path.join(dir_path_content, object)
+        dest_path = os.path.join(dest_dir_path, object.replace(".md",".html"))
+        if "." in object:
+            generate_page(object_path, template_path, dest_path)
+        elif "." not in object:
+            generate_pages_recursive(object_path, template_path, dest_path)

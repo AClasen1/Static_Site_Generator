@@ -21,13 +21,14 @@ def main():
 	for file in from_dir_files:
 		file_in_destination_path =  file.replace(from_folder_name, to_folder_name, 1)
 		copy(file, file_in_destination_path)
-	html_page_generation.generate_page("./content/index.md","./template.html","./public/index.html")
-
+	#html_page_generation.generate_page("./content/index.md","./template.html","./public/index.html")
+	html_page_generation.generate_pages_recursive("./content","./template.html","./public")
 	
 	
 
 def get_folders_and_files(directory):
 	folder_elements = os.listdir(directory)
+	print(folder_elements)
 	folder_elements_with_path = list(map(lambda x: os.path.join(directory, x), folder_elements))
 	files_with_path = list(filter(os.path.isfile, folder_elements_with_path))
 	subdirectories_with_path = list(filter(os.path.isdir, folder_elements_with_path))
